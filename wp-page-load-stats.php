@@ -57,8 +57,8 @@ class WP_Page_Load_Stats {
 	public function wp_head() {
 		echo "<script type='text/javascript'>
 			function wp_pls_hide(){
-			   var wpplsDiv = document.getElementById('wp-page-load-stats');
-			   wpplsDiv.style.display = 'none';
+				var wpplsDiv = document.getElementById('wp_pls');
+					wpplsDiv.style.display = 'none';
 			}
 		</script>";
 	}
