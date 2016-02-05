@@ -1,0 +1,22 @@
+{
+  "name": "wp-page-load-stats",
+  "version": "1.0.0",
+  "description": "Displays statistics about the WordPress page load",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gitschatz/WP-Page-Load-Stats.git"
+  },
+  "author": "Mike Jolley",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/gitschatz/WP-Page-Load-Stats/issues"
+  },
+  "homepage": "https://github.com/gitschatz/WP-Page-Load-Stats#readme",
+  "dependencies": {
+    "perfbar": "^0.2.1"
+  }
+}
