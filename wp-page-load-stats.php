@@ -101,12 +101,11 @@ class WP_Page_Load_Stats {
 		// Display the info
 		?>
 		<div id="wp_pls">
-			<ul>
-				<li><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></li>
-				<li><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></li>
-				<li><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></li>
-				<li><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></li>
-			</ul>
+			<p>
+				<span><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
+				<span><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
+				<span><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
+				<span><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
 			<div class="actions">
 				<a onclick="wp_pls_hide()" href="javascript:void(0);">&times;</a>
 				<a class="reset" href="<?php echo add_query_arg( 'reset_wp_pls_stats', 1 ); ?>">-</a>

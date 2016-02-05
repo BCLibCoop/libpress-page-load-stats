@@ -1,13 +1,14 @@
 #wp_pls {
-	border: 1px solid #D2DBF4;
-	color: #0D2054;
-	background: #F4F8FD;
+/*	border: 1px solid #D2DBF4;*/
+	color: #FFFFFF;
+/*	background: #F4F8FD;*/
 	padding: 1em 1em 1em 1.5em;
-	position:fixed;
+	/**position:fixed;**/
 	bottom:0px;
 	right:0px;
 	font-family: monospace;
-	font-size: 13px;
+	font-size: 11px;
+	height: 2em;
 }
 #wp_pls .actions {
 	position: absolute;
@@ -40,12 +41,13 @@
 	height: 0;
 	overflow: hidden;
 }
-#wp_pls ul {
+#wp_pls p {
 	list-style: none outside;
 	margin: 0;
 	padding: 0;
+	text-align: center;
 }
-#wp_pls ul li {
+#wp_pls p span {
 	list-style: none outside;
 	margin: 0;
 	padding: 0;
