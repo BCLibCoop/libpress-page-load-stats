@@ -98,20 +98,21 @@ class WP_Page_Load_Stats {
 			$average_load_time = round( array_sum( $load_times ) / sizeof( $load_times ), 4 );
 		}
 
-		// Display the info
-		?>
-		<div id="wp_pls">
-			<p>
-				<span><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
-				<span><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
-				<span><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
-				<span><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
-			<div class="actions">
-				<a onclick="wp_pls_hide()" href="javascript:void(0);">&times;</a>
-				<a class="reset" href="<?php echo add_query_arg( 'reset_wp_pls_stats', 1 ); ?>">-</a>
+		// Display the info for admins only (users with manage_options)
+		if ( current_user_can( 'manage_options' ) ) { ?>
+			<div id="wp_pls">
+				<p>
+					<span><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
+					<span><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
+					<span><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
+					<span><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
+				<div class="actions">
+					<a onclick="wp_pls_hide()" href="javascript:void(0);">&times;</a>
+					<a class="reset" href="<?php echo add_query_arg( 'reset_wp_pls_stats', 1 ); ?>">-</a>
+				</div>
 			</div>
-		</div>
 		<?php
+		}
 	}
 
 	/**
