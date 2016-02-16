@@ -55,12 +55,21 @@ class WP_Page_Load_Stats {
 	 * wp_head function.
 	 */
 	public function wp_head() {
-		echo "<script type='text/javascript'>
-			function wp_pls_hide(){
-				var wpplsDiv = document.getElementById('wp_pls');
-					wpplsDiv.style.display = 'none';
-			}
-		</script>";
+	echo "<script>window.addEventListener('load', function(){
+								setTimeout(function() {
+							  var timing = window.performance.timing;
+							  var userTime = timing.loadEventEnd - timing.navigationStart;
+							  var dns = timing.domainLookupEnd - timing.domainLookupStart;
+							  var connection = timing.connectEnd - timing.connectStart;
+							  var requestTime = timing.responseEnd - timing.requestStart;
+							  var fetchTime = timing.responseEnd - timing.fetchStart;
+							  var perf = document.getElementById('wp-pls-stats');
+							  perf.innerHTML += `<span class='wp-pls-value'>Load time: \${userTime}ms; </span>
+																	 <span class='wp-pls-value'>Request duration: \${requestTime}ms; </span>
+																	 <span class='wp-pls-value'>Fetch duration: \${fetchTime}ms; </span>`;
+							}, 0);
+							}, false);
+				</script>";
 	}
 
 	/**
@@ -68,6 +77,7 @@ class WP_Page_Load_Stats {
 	 */
 	public function wp_footer() {
 		$this->display();
+		//wp_enqueue_script( 'wp_pls-client' );
 	}
 
 	/**
@@ -75,6 +85,7 @@ class WP_Page_Load_Stats {
 	 */
 	public function enqueue() {
         wp_enqueue_style( 'wp_pls-style', plugins_url('style.css', __FILE__) );
+        //wp_register_script( 'wp_pls-client', plugins_url('/js/clientside_stats.js', __FILE__),  null, false, true );
 	}
 
 	/**
@@ -99,20 +110,18 @@ class WP_Page_Load_Stats {
 		}
 
 		// Display the info for admins only (users with manage_options)
-		if ( current_user_can( 'manage_options' ) ) { ?>
-			<div id="wp_pls">
-				<p>
-					<span><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
-					<span><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
-					<span><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
-					<span><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
-				<div class="actions">
-					<a onclick="wp_pls_hide()" href="javascript:void(0);">&times;</a>
-					<a class="reset" href="<?php echo add_query_arg( 'reset_wp_pls_stats', 1 ); ?>">-</a>
-				</div>
+			  ?><div id="wp-pls-container">
+			  <p id="wp-pls-stats">
+				<?php if ( current_user_can( 'manage_options' ) ) { ?>
+					<span class="wp-pls-value"><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
+					<br />
+			<?php } ?>
+				</p>
 			</div>
 		<?php
-		}
 	}
 
 	/**
