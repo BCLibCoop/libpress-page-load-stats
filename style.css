@@ -1,4 +1,4 @@
-#wp_pls {
+#wp-pls-container {
 /*	border: 1px solid #D2DBF4;*/
 	color: #FFFFFF;
 /*	background: #F4F8FD;*/
@@ -10,13 +10,13 @@
 	font-size: 11px;
 	height: 2em;
 }
-#wp_pls .actions {
+#wp-pls-container .actions {
 	position: absolute;
 	left: 0;
 	top: 0;
 	margin: -10px 0 0 -8px;
 }
-#wp_pls a {
+#wp-pls-container a {
 	background: #F4F8FD;
 	border: 1px solid #D2DBF4;
 	border-bottom-width: 2px;
@@ -35,19 +35,19 @@
 	float: left;
 	margin: 0 1px 0 0;
 }
-#wp_pls .reset {
+#wp-pls-container .reset {
 	background: #F4F8FD url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAcElEQVQYV2NkgAIu+SBJZkamZzA+iP77/58USOzzgzWMjCABXoWQ/zCJbw/XPQexkTWCFcIEQBxk02CaQWJghSABkBUwk5AVI7PBCtFNQ1cMUkO8QlxWoYcGiq9hDkf3FMgPxAcPLBxhgYse4LDQAABM5VEfCPJ/JQAAAABJRU5ErkJggg==) no-repeat 5px 5px;
 	padding: 20px 0 0 0;
 	height: 0;
 	overflow: hidden;
 }
-#wp_pls p {
+#wp-pls-container p {
 	list-style: none outside;
 	margin: 0;
 	padding: 0;
 	text-align: center;
 }
-#wp_pls p span {
+#wp-pls-container p span {
 	list-style: none outside;
 	margin: 0;
 	padding: 0;
