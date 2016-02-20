@@ -32,7 +32,7 @@ class WP_Page_Load_Stats {
 		add_action( 'wp_footer', array( $this, 'wp_footer' ) );
 		add_action( 'admin_head', array( $this, 'wp_head' ) );
 		add_action( 'admin_footer', array( $this, 'wp_footer' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 	}
 
@@ -90,6 +90,13 @@ class WP_Page_Load_Stats {
         //wp_register_script( 'wp_pls-client', plugins_url('/js/clientside_stats.js', __FILE__),  null, false, true );
 	}
 
+		/**
+	 * admin enqueue function.
+	 */
+	public function admin_enqueue() {
+        wp_enqueue_style( 'wp_pls-style-admin', plugins_url('admin-style.css', __FILE__) );
+	}
+
 	/**
 	 * display function.
 	 */
@@ -120,7 +127,7 @@ class WP_Page_Load_Stats {
 					<span class="wp-pls-value"><?php printf( __( '%s/%s MB (%s) memory used | ', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
 					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB | ', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
 					<br />
-			<?php } ?>
+				<?php } ?>
 				</p>
 			</div>
 		<?php
