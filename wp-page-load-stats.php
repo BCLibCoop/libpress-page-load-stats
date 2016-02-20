@@ -58,15 +58,17 @@ class WP_Page_Load_Stats {
 	echo "<script>window.addEventListener('load', function(){
 								setTimeout(function() {
 							  var timing = window.performance.timing;
-							  var userTime = timing.loadEventEnd - timing.navigationStart;
-							  var dns = timing.domainLookupEnd - timing.domainLookupStart;
-							  var connection = timing.connectEnd - timing.connectStart;
-							  var requestTime = timing.responseEnd - timing.requestStart;
-							  var fetchTime = timing.responseEnd - timing.fetchStart;
+							  var userTime = (timing.loadEventEnd - timing.navigationStart) / 1000;
+							  var pageTime = (timing.loadEventEnd - timing.responseEnd) / 1000;
+							  var connection = (timing.connectEnd - timing.connectStart) / 1000;
+							  var requestTime = (timing.responseEnd - timing.requestStart) / 1000;
+							  var fetchTime = (timing.responseEnd - timing.fetchStart) / 1000;
 							  var perf = document.getElementById('wp-pls-stats');
-							  perf.innerHTML += `<span class='wp-pls-value'>Load time: \${userTime}ms; </span>
-																	 <span class='wp-pls-value'>Request duration: \${requestTime}ms; </span>
-																	 <span class='wp-pls-value'>Fetch duration: \${fetchTime}ms; </span>`;
+							  perf.innerHTML += `<span class='wp-pls-value' title='Total perceived load time for the user: when the page is 'done''>Total load: \${userTime}s | </span>
+																	 <span class='wp-pls-value' title='Time to request'>Request: \${requestTime}s | </span>
+																	 <span class='wp-pls-value' title='Time for client to load this page after response from server'>Page load: \${pageTime}s | </span>
+																	 <span class='wp-pls-value' title='How long it took for server to fetch data'>Network: \${fetchTime}s | </span>
+																	 <span class='wp-pls-value' title='How long it took for connection to server to be created'>Connection: \${connection}s </span>`;
 							}, 0);
 							}, false);
 				</script>";
@@ -113,10 +115,10 @@ class WP_Page_Load_Stats {
 			  ?><div id="wp-pls-container">
 			  <p id="wp-pls-stats">
 				<?php if ( current_user_can( 'manage_options' ) ) { ?>
-					<span class="wp-pls-value"><?php printf( __( '%s queries in %s seconds.', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
-					<span class="wp-pls-value"><?php printf( __( 'Average load time of %s (%s runs).', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
-					<span class="wp-pls-value"><?php printf( __( '%s out of %s MB (%s) memory used.', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
-					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB.', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( '%s queries in %ss | ', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( 'Average load: %ss (%s runs) | ', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( '%s/%s MB (%s) memory used | ', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB | ', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
 					<br />
 			<?php } ?>
 				</p>
