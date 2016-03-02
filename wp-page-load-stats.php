@@ -64,7 +64,7 @@ class WP_Page_Load_Stats {
 							  var requestTime = (timing.responseEnd - timing.requestStart) / 1000;
 							  var fetchTime = (timing.responseEnd - timing.fetchStart) / 1000;
 							  var perf = document.getElementById('wp-pls-stats');
-							  perf.innerHTML += `<span class='wp-pls-value' title='Total perceived load time for the user: when the page is 'done''>Total load: \${userTime}s | </span>
+							  perf.innerHTML += `<span class='wp-pls-value' title='Total perceived load time for the user'>Total load: \${userTime}s | </span>
 																	 <span class='wp-pls-value' title='Time to request'>Request: \${requestTime}s | </span>
 																	 <span class='wp-pls-value' title='Time for client to load this page after response from server'>Page load: \${pageTime}s | </span>
 																	 <span class='wp-pls-value' title='How long it took for server to fetch data'>Network: \${fetchTime}s | </span>
