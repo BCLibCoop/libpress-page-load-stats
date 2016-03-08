@@ -135,10 +135,14 @@ class WP_Page_Load_Stats {
 		<?php
 
 		//collecting data temporarily in log file
-		$load_size = sizeof($load_times);
-		$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
-		$log_file = WP_CONTENT_DIR . '/load_stats.log';
-		file_put_contents($log_file, $logdata, FILE_APPEND);
+
+		$rando = rand(0, 1000);
+		if ($rando % 5 == 0 AND $rando % 7 == 0) { //Only sample 14% of requests
+			$load_size = sizeof($load_times);
+			$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
+			$log_file = WP_CONTENT_DIR . '/load_stats.log';
+			file_put_contents($log_file, $logdata, FILE_APPEND);
+		}
 	}
 
 	/**
