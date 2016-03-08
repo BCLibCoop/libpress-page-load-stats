@@ -64,6 +64,7 @@ class WP_Page_Load_Stats {
 							  var requestTime = (timing.responseEnd - timing.requestStart) / 1000;
 							  var fetchTime = (timing.responseEnd - timing.fetchStart) / 1000;
 							  var perf = document.getElementById('wp-pls-stats');
+
 							  perf.innerHTML += `<span class='wp-pls-value' title='Total perceived load time for the user'>Total load: \${userTime}s | </span>
 																	 <span class='wp-pls-value' title='Time to request'>Request: \${requestTime}s | </span>
 																	 <span class='wp-pls-value' title='Time for client to load this page after response from server'>Page load: \${pageTime}s | </span>
@@ -109,6 +110,7 @@ class WP_Page_Load_Stats {
 		$memory_limit 		= round( size_format( $this->let_to_num( WP_MEMORY_LIMIT ) ), 2 );
 		$load_times			= array_filter( (array) get_option( $this->average_option, array() ) );
 		$load_times[]		= $timer_stop;
+		$memory_percentile = round( ( $memory_usage / $memory_limit ), 2 ) * 100;
 
 		// Update load times
 		update_option( $this->average_option, $load_times );
@@ -124,13 +126,19 @@ class WP_Page_Load_Stats {
 				<?php if ( current_user_can( 'manage_options' ) ) { ?>
 					<span class="wp-pls-value"><?php printf( __( '%s queries in %ss | ', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
 					<span class="wp-pls-value"><?php printf( __( 'Average load: %ss (%s runs) | ', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
-					<span class="wp-pls-value"><?php printf( __( '%s/%s MB (%s) memory used | ', 'wp-page-load-stats' ), $memory_usage, $memory_limit, round( ( $memory_usage / $memory_limit ), 2 ) * 100 . '%' ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( '%s/%s MB (%s) memory used | ', 'wp-page-load-stats' ), $memory_usage, $memory_limit, $memory_percentile . '%' ); ?></span>
 					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB | ', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
 					<br />
 				<?php } ?>
 				</p>
 			</div>
 		<?php
+
+		//collecting data temporarily in log file
+		$load_size = sizeof($load_times);
+		$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
+		$log_file = WP_CONTENT_DIR . '/load_stats.log';
+		file_put_contents($log_file, $logdata, FILE_APPEND);
 	}
 
 	/**
