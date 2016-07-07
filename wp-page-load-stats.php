@@ -113,7 +113,15 @@ class WP_Page_Load_Stats {
 		$memory_percentile = round( ( $memory_usage / $memory_limit ), 2 ) * 100;
 
 		// Update load times
-		update_option( $this->average_option, $load_times );
+		if ( $this->sample_chance( 10 ) ) { //Only sample 10% of requests
+			update_option( $this->average_option, $load_times );
+
+			//collecting data temporarily in log file
+			$load_size = sizeof($load_times);
+			$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
+			$log_file = WP_CONTENT_DIR . '/load_stats.log';
+			file_put_contents($log_file, $logdata, FILE_APPEND);
+		}
 
 		// Get average
 		if ( sizeof( $load_times ) > 0 ) {
@@ -121,28 +129,18 @@ class WP_Page_Load_Stats {
 		}
 
 		// Display the info for admins only (users with manage_options)
-			  ?><div id="wp-pls-container">
+		?><div id="wp-pls-container">
 			  <p id="wp-pls-stats">
 				<?php if ( current_user_can( 'manage_options' ) ) { ?>
 					<span class="wp-pls-value"><?php printf( __( '%s queries in %ss | ', 'wp-page-load-stats' ), $query_count, $timer_stop ); ?></span>
 					<span class="wp-pls-value"><?php printf( __( 'Average load: %ss (%s runs) | ', 'wp-page-load-stats' ), $average_load_time, sizeof( $load_times ) ); ?></span>
 					<span class="wp-pls-value"><?php printf( __( '%s/%s MB (%s) memory used | ', 'wp-page-load-stats' ), $memory_usage, $memory_limit, $memory_percentile . '%' ); ?></span>
-					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB | ', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
+					<span class="wp-pls-value"><?php printf( __( 'Peak memory usage %s MB ', 'wp-page-load-stats' ), $memory_peak_usage ); ?></span>
 					<br />
 				<?php } ?>
 				</p>
 			</div>
 		<?php
-
-		//collecting data temporarily in log file
-
-		$rando = rand(0, 1000);
-		if ($rando % 5 == 0 AND $rando % 7 == 0) { //Only sample 14% of requests
-			$load_size = sizeof($load_times);
-			$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
-			$log_file = WP_CONTENT_DIR . '/load_stats.log';
-			file_put_contents($log_file, $logdata, FILE_APPEND);
-		}
 	}
 
 	/**
@@ -170,6 +168,13 @@ class WP_Page_Load_Stats {
 	    }
 	    return $ret;
 	}
-}
 
-$WP_Page_Load_Stats = new WP_Page_Load_Stats();
+	public function sample_chance( $sample ) {
+		$rando = mt_rand(0, 99);
+		return $sample > $rando;
+	}
+
+
+} //Class
+
+if (! isset($PageStats) ) $PageStats = new WP_Page_Load_Stats();
