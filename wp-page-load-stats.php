@@ -18,10 +18,10 @@ Domain Path: /languages/
 class WP_Page_Load_Stats {
 
 	/**
-	 * Stores the name of the option where averages get saved.
+	 * Stores the name of the transient where averages get saved.
 	 * @var string
 	 */
-	private $average_option;
+	private $average_transient;
 
 	/**
 	 * Gets things started
@@ -40,12 +40,12 @@ class WP_Page_Load_Stats {
 	 * init function.
 	 */
 	public function init() {
-		$this->average_option = is_admin() ? 'wp_pls_admin_load_times' : 'wp_pls_load_times';
+		$this->average_transient = is_admin() ? 'wp_pls_admin_load_times' : 'wp_pls_load_times';
 
 		load_plugin_textdomain( 'wp-page-load-stats', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 		if ( isset( $_GET['reset_wp_pls_stats'] ) && $_GET['reset_wp_pls_stats'] == 1 ) {
-			delete_option( $this->average_option );
+			delete_transient( $this->average_transient );
 			wp_safe_redirect( wp_get_referer() );
 			exit;
 		}
@@ -87,15 +87,15 @@ class WP_Page_Load_Stats {
 	 * enqueue function.
 	 */
 	public function enqueue() {
-        wp_enqueue_style( 'wp_pls-style', plugins_url('style.css', __FILE__) );
-        //wp_register_script( 'wp_pls-client', plugins_url('/js/clientside_stats.js', __FILE__),  null, false, true );
+    wp_enqueue_style( 'wp_pls-style', plugins_url('style.css', __FILE__) );
+    //wp_register_script( 'wp_pls-client', plugins_url('/js/clientside_stats.js', __FILE__),  null, false, true );
 	}
 
 		/**
 	 * admin enqueue function.
 	 */
 	public function admin_enqueue() {
-        wp_enqueue_style( 'wp_pls-style-admin', plugins_url('admin-style.css', __FILE__) );
+     wp_enqueue_style( 'wp_pls-style-admin', plugins_url('admin-style.css', __FILE__) );
 	}
 
 	/**
@@ -108,25 +108,29 @@ class WP_Page_Load_Stats {
 		$memory_usage 		= round( size_format( memory_get_usage() ), 2 );
 		$memory_peak_usage 	= round( size_format( memory_get_peak_usage() ), 2 );
 		$memory_limit 		= round( size_format( $this->let_to_num( WP_MEMORY_LIMIT ) ), 2 );
-		$load_times			= array_filter( (array) get_option( $this->average_option, array() ) );
-		$load_times[]		= $timer_stop;
 		$memory_percentile = round( ( $memory_usage / $memory_limit ), 2 ) * 100;
+
+		$load_times			= array_filter( (array) get_transient( $this->average_transient) );
+		
+		//Add this recent load to $load_times, makes it cumulative
+		$load_times[]		= $timer_stop;
+
+		// Get average load time
+		if ( sizeof( $load_times ) > 0 ) {
+			$average_load_time = round( array_sum( $load_times ) / sizeof( $load_times ), 4 );
+		}
 
 		// Update load times
 		if ( $this->sample_chance( 10 ) ) { //Only sample 10% of requests
-			update_option( $this->average_option, $load_times );
+			set_transient( $this->average_transient, $load_times, 24 * HOUR_IN_SECONDS ); //Set a daily transient for this site with load times
 
-			//collecting data temporarily in log file
+			//collecting longer term data network-wide data in log file
 			$load_size = sizeof($load_times);
 			$logdata = "$timer_stop,$query_count,$average_load_time,$load_size,$memory_usage,$memory_limit,$memory_percentile,$memory_peak_usage" . PHP_EOL;
 			$log_file = WP_CONTENT_DIR . '/load_stats.log';
 			file_put_contents($log_file, $logdata, FILE_APPEND);
 		}
 
-		// Get average
-		if ( sizeof( $load_times ) > 0 ) {
-			$average_load_time = round( array_sum( $load_times ) / sizeof( $load_times ), 4 );
-		}
 
 		// Display the info for admins only (users with manage_options)
 		?><div id="wp-pls-container">
@@ -152,22 +156,31 @@ class WP_Page_Load_Stats {
 	 * @return int
 	 */
 	public function let_to_num( $size ) {
-	    $l 		 = substr( $size, -1 );
-	    $ret 	 = substr( $size, 0, -1 );
-	    switch( strtoupper( $l ) ) {
-		    case 'P':
-		        $ret *= 1024;
-		    case 'T':
-		        $ret *= 1024;
-		    case 'G':
-		        $ret *= 1024;
-		    case 'M':
-		        $ret *= 1024;
-		    case 'K':
-		        $ret *= 1024;
-	    }
-	    return $ret;
+    $l 		 = substr( $size, -1 );
+    $ret 	 = substr( $size, 0, -1 );
+    switch( strtoupper( $l ) ) {
+	    case 'P':
+	        $ret *= 1024;
+	    case 'T':
+	        $ret *= 1024;
+	    case 'G':
+	        $ret *= 1024;
+	    case 'M':
+	        $ret *= 1024;
+	    case 'K':
+	        $ret *= 1024;
+    }
+    return $ret;
 	}
+
+		/**
+	 * sample_chance function.
+	 *
+	 * Helper function for random sampling
+	 *
+	 * @param $sample
+	 * @return true
+	 */
 
 	public function sample_chance( $sample ) {
 		$rando = mt_rand(0, 99);
