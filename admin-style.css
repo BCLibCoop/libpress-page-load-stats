@@ -1,23 +1,25 @@
 #wp-pls-container {
-/*	border: 1px solid #D2DBF4;*/
-	color: #00000;
-	padding: 1em 1em 1em 1.5em;
-	/**position:fixed;**/
-	bottom:0px;
-	right:0px;
-	font-family: monospace;
-	font-size: 12px;
-	height: 2em;
+  /* border: 1px solid #D2DBF4; */
+  color: #00000;
+  padding: 1em 1em 1em 1.5em;
+  /* position:fixed; */
+  bottom: 0px;
+  right: 0px;
+  font-family: monospace;
+  font-size: 12px;
+  height: 2em;
 }
+
 #wp-pls-container p {
-	list-style: none outside;
-	margin: 0;
-	padding: 0;
-	text-align: center;
+  list-style: none outside;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
+
 #wp-pls-container p span {
-	list-style: none outside;
-	margin: 0;
-	padding: 0;
-	line-height: 1.4em;
+  list-style: none outside;
+  margin: 0;
+  padding: 0;
+  line-height: 1.4em;
 }
